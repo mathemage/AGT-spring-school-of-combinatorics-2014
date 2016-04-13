@@ -1,0 +1,340 @@
+\documentclass{article}
+\usepackage{a4wide}
+\usepackage[top=2cm, bottom=2cm, left=1.5cm, right=1.5cm]{geometry}
+\usepackage{amsthm}
+\usepackage{amssymb}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{fact}{Fact}
+\newtheorem{claim}{Claim}
+\theoremstyle{definition}
+\newtheorem*{definition}{Definition}
+
+\title{Algorithmic Game Theory -- Definitions \& Exercises}
+
+\newcommand{\calM}{\mathcal{M}}
+\newcommand{\calO}{\mathcal{O}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\R}{\mathbb{R}}
+
+\begin{document}
+\maketitle
+
+
+\section{Definitions}
+
+\begin{itemize}
+\item A game consists of a set $N$ of players $\{1, 2, \dots, n\}$.
+Each player $i$ has his own set of possible (pure) strategies, say $S_i$.
+To play the game, each player $i$ selects a strategy $s_i\in S_i$.
+
+\item
+We will use $s = (s_1, \dots, s_n)$ to denote the vector of strategies selected by the
+players and $S = S_1\times\dots\times S_n$ to denote the set of all possible ways in which players can pick
+strategies.
+
+\item
+The vector of strategies $s\in S$ selected by the players determine the \emph{outcome} for each player.
+In a game, for each player it is given a preference ordering on these outcomes by
+a complete, transitive, reflexive binary relation on the set of all strategy vectors.
+
+\item A natural way to give the preference ordering on the outcomes is by defining
+the payoff (utility) to each player $i$, or cost in other games, which are the functions
+$u_i:S\to \R$, or $c_i:S\to \R$.
+
+\item We say that a game is given in \emph{standard (matrix) form} if the list of all possible
+strategy combinations together with respective payoffs is given.
+
+%%%%%%%%%%%%%%%%%%%%%%%%% MERGE %%%%%%%%%%%%%%%%%%%%%%%%
+\item
+A strategy vector $s\in S$ is said to be a \emph{dominant strategy} if for each
+player $i$ and each alternate strategy vector $s'\in  S$, we have that
+$u_i(s_i, s'_{-i})\ge  u_i(s'_i, s'_{-i})$.
+%%%%%%%%%%%%%%%%%%%%%%%%% MERGE %%%%%%%%%%%%%%%%%%%%%%%%
+
+\item
+A strategy vector $s\in S$ is said to be a \emph{pure Nash equilibrium} if for each player $i$ and each
+alternate strategy $s'_i\in  S_i$, we have that $u_i(s_i, s_{-i})\ge  u_i(s'_i, s_{-i})$.
+
+\item A \emph{mixed strategy $m_i:S_i\to[0,1]$} of player $i$ is a probabilistic distribution over the set $S_i$.
+Each player $i$ thus aims to maximize the expected payoff $\=u_i(m_i, m_{-i})$ under this distribution.
+
+\item A vector $m=(m_1,\dots,m_n)$ of mixed strategies of all players
+is called \emph{mixed Nash equilibrium} if for each player $i$ and each
+alternate mixed strategy $m'_i$ we have that $\=u_i(m_i,m_{-i})\ge \=u_i(m'_i,m_{-i})$.
+
+\item A \emph{correlated equilibrium} is a probability distribution $p$ over
+strategy vectors such that for each player $i$ and each alternate strategy
+$s'_i$ we have that $\sum_{s_{-i}} p(s_i , s_{-i}) u_i(s_i , s_{-i}) \ge
+\sum_{s_{-i}} p(s'_i , s_{-i}) u_i(s'_i , s_{-i})$ where $p(s) = p(s_i,
+s_{-i})$ is the probability that an external correlation device suggests
+a~strategy vector $s$.
+
+\end{itemize}
+
+
+\subsection{Exercises}
+
+\begin{enumerate}
+
+\item
+Give a finite algorithm for finding a pure Nash equilibrium for a game with two players
+defined in a standard form.
+What about finding a mixed Nash equilibrium?
+
+\item
+Consider a two-player game given in standard form where each player has $n$ strategies.
+Assume that the payoffs for each player are in the range $[0, 1]$ and are selected
+independently and uniformly at random. Show that the probability that this random
+game has a pure Nash equilibrium approaches $1 - 1/e$ as $n$ goes to infinity.
+
+\item
+We have seen that finding a Nash in a two-person zero-sum game is significantly
+easier than general two-person games. Now consider a three-person zero-sum game,
+that is, a game in which the rewards of the three players always sums to zero. Show
+that finding a Nash equilibrium in such games is at least as hard as that in general
+two-person games.
+
+\item
+Consider an $n$ person game in which each player has only two strategies.
+A dependence graph $G$ is given, whose nodes are the players, and an edge between two
+players $i$ and $j$ represents the fact that the payoff of player $i$ depends on the strategy
+of player $j$ and vice versa. Thus, if node $i$ has $k$ neighbors in $G$,
+then its payoff depends only on its own strategy and the strategies of its $k$ neighbors.
+Assume that the graph $G$ is a tree with maximum degree 3.
+Give a polynomial time algorithm to decide if such a game has a pure Nash
+equilibrium.
+(Recall that there are $2^n$ possible pure strategy vectors, yet your algorithm
+must run in time polynomial in $n$.)
+
+\item
+Assume that $n$ companies, which produce the same product, are competing for
+customers. If each company $i$ has a production level of $q_i$,
+there will be $q = \sum_{i=1}^n q_i$ units of the product on the market.
+Now, demand for this product depends on the price: if $q$ units are on the
+market, price will settle so that all $q$ units are sold.
+Assume that we are given a ``demand-price curve'' $p(d)$,
+which gives the price at which all $d$ units can be sold.
+Assume that $p(d)$ is a monotone decreasing, differentiable function of $d$.
+With this definition, the income of the firm $i$ will be $q_i p(q)$.
+Assume that production is very cheap and each firm will produce to maximize its income.
+Show that for some $p(d)$ the total income for a monopolistic firm ($n=1$),
+can be arbitrarily higher than the total income of many different firms sharing
+the same market.
+(Hint: You may try, e.g., $p(d) = 1 - d$.)
+
+\end{enumerate}
+
+% Mechanism design
+\section{Introduction to mechanism design}
+\subsection{Elections}
+\begin{itemize}
+\item Consider a set of alternatives $A$ (the candidates) and a set of $n$ voters I.
+Let us denote by $L$ the set of linear orders on $A$.
+The preferences of each voter $i$ are formally given by $\prec_i \in  L$,
+where $a\prec_i b$ means that $i$ prefers alternative $b$ to alternative $a$.
+
+\item
+A function $f: L^n\to  A$ is called a \emph{social choice function}.
+A function $F: L^n\to L$ is called a \emph{social welfare function}.
+
+\item
+A social welfare function $F$ satisfies \emph{unanimity} if for every $\prec\in L$,
+$F(\prec,\dots,\prec)=\prec$.
+
+\item
+Voter $i$ is a \emph{dictator} in social welfare function $F$ if for all $\prec_1,\dots,\prec_n\in L$,
+$F(\prec_1,\dots,\prec_n)=\prec_i$.
+$F$ is not a dictatorship if no $i$ is a dictator in it.
+
+\item
+A social welfare function satisfies \emph{independence of irrelevant alternatives}
+if the following holds:
+For every $a, b\in A$ and every $\prec_1,\dots,\prec_n,\prec'_1,\dots,\prec'_n\in L$,
+if we denote $\prec=F(\prec_1,\dots,\prec_n)$ and $\prec'=F(\prec'_1,\dots,\prec'_n)$,
+then $a\prec_i b \Leftrightarrow a\prec'_i b$ for all $i$ implies that
+$a\prec b \Leftrightarrow a\prec' b$.
+
+\begin{theorem}[Arrow]
+Every social welfare function over a set of more than 2 candidates ($|A| \geq 3$) that satisfies
+unanimity and independence of irelevant alternatives is a dictatorship.
+\end{theorem}
+
+\begin{claim}[pairwise neutrality]
+Let $>_1, /ldots, >_n$ and $>_1', /ldots, >_n'$ be two plazer profiles such that for everz player
+$i$, $a >_i b \Leftrightarrow c >_i' d$. Then $a > b \Leftrightarrow c >' d$ where
+$> = F(>_1, \ldots, >_n)$ and $>' = F(>_1', \ldots, >_n')$
+\end{claim}
+
+\item
+A social choice function $f$ is monotone if
+$f(\prec_1,\dots,\prec_i,\dots,\prec_n)=a\ne a'=f(\prec_1,\dots,\prec'_i,\dots,\prec_n)$
+implies that $a'\prec_i a$ and $a\prec_i a'$.
+
+\item
+A social choice function $f$ can be \emph{strategically manipulated} by
+voter $i$ if for some $\prec_1,\dots,\prec_n\in L$ and some $\prec'_i\in L$
+we have that $a \prec_i a'$ where $a=f(\prec_1,\dots,\prec_i,\dots,\prec_n)$
+and $a'=f(\prec_1,\dots,\prec'_i,\dots,\prec_n)$.
+$f$ is called \emph{incentive compatible} if it cannot be manipulated.
+
+\item Voter i is a \emph{dictator} in social choice function $f$ if for all
+$<_1, \ldots <_n \in L, \forall b \neq a, a >_i b \Rightarrow F(<_1, /ldots, <_n) = a$
+$f$ is called \emph{dictatorship} if some $i$ is a dictator in it.
+
+\begin{theorem}
+Let $f$ be an incentive complatible social choice function onto A, where $|A| \geq 3$, then $f$
+is a dictatorship.
+\end{theorem}
+
+\end{itemize}
+
+\subsection{Auctions}
+\begin{itemize}
+
+\item \emph{Vickrey second price auction:} Let the winner be the player $i$ with the highhest
+declared value of $w_i$ and let $i$ pay the second highest declared bid $p^* = \max_{i \neq j} w_j$.
+
+\begin{proposition}[Vickrey]
+For everz $w_1, \ldots, w_n$ and every $w_i'$. Let $u_i$ be $i$'s utility if he bids $w_i$ and $u_i'$
+his utilitz if he bid $w_i'$. Then $u_i \geq u_i'$.
+\end{proposition}
+
+\item $v_i: A \to R$ is a \emph{valuation function}, $v_i \in V_i$. $V_i \subseteq R^A$ is commonly
+known set of possible valuation function for player $i$.
+
+\item $v = (v_1, \ldots, v_n)$ -- $n$-dimensional vector. $v_{-i} = (v_1, \ldots, v_{i-1}, v_{i+1}, \ldots, v_n)$.
+$(v_{i}, v_{-i}) = (v_1, \ldots, v_n)$. Similarly for $V, t, x, X$.
+
+\item A \emph{mechanism} is a social choice function $f: V_1 \times \ldots \times V_n \to A$
+and a vector of payment funcion s $p_1, \ldots, p_n$, where $p_i: V_1 \times \ldots \times V_n \to R$
+is the amount that player $i$ pays.
+
+\item A mechanism $(f, p_1, \ldots, p_n)$ is callen \emph{incentive compatible} if for every player $i$,
+every $v_1 \in V_1, \ldots, v_n \in V_n$ and every $v_i \in V_i$, if we denote $a = f(v_i, v_{-i})$
+and $a' = f(v_i', v_{-i}')$, then $v_i(a) - p_i(v_i, p_{-i}) \geq v_i(a') - p_i(v_i', v_{-i})$.
+
+\item A mechanism $(f, p_1, \ldots, p_n)$ is callen \emph{Vickrey-Clarke-Groves (VCG) mechanism} if
+\begin{itemize}
+\item $f(v_1, \ldots, v_n) \in \texttt{argmax}_{a \in A} \sum_i v_i(a);$ that is, $f$ maximiyes the social welfare, and
+\item for some functions $h_1, \ldots, h_n$, where $h_i: V_{-i} \to R$ (i. e. $h_i$ does not depend on $v_i$),
+we have that for all $v_1 \in V_1, \ldots, v_n \in V_n: p_i(v_1, \ldots, v_n) = h_i(v_{-i})
+- \sum_{j \neq i} v_i(f(v_1, \ldots, v_n))$. 
+\end{itemize}
+
+\begin{theorem}[Vickrey-Clarke-Grove]
+Every VCG mechanism is incentive compatible.
+\end{theorem}
+
+\item A mechanism is \emph{individualy rational} if players always get nonnegative utility.
+Formally if for every $v_1, \ldots, v_n$ we have that $v_i(f(v_1, \ldots, v_n)) - p_i(v_1, \ldots, v_n) \geq 0$.
+
+\item A mechanism has no positive transfers if no players is ever paid money. Formally if for every $v_1, \ldots, v_n$
+and every $i$, $p_i(v_1, \ldots, v_n) \geq 0$.
+
+\item \emph{Clarke pivot rule:} The choice $h_i(v_{-i}) = \max \sum_{j \neq i} v_i(b)$ is called the Clarke pivot
+payment. Under this rule the payment of player $i$ is $p_i(v_1, \ldots, v_n) = \max \sum_{j \neq i} v_j(b)
+- \sum_{j \neq i} v_i(a)$, where $a = f(v_1, \ldots, v_n)$.
+
+\begin{lemma}
+A VCG mechanism with Clarke pivot payments makes no positive transfers. If $V_i(a) \geq 0$ for every $v_i \in V_i$
+and $a \in A$ then it is also individually rational.
+\end{lemma}
+
+\end{itemize}
+
+\subsection{Exercises}
+\begin{enumerate}
+
+\item Prove that a social choice function is incentive compatible if and only if it is monotone.
+
+\item Show that a social welfare function that is a dictatorship satisfies
+unanimity and independence of irrelevant alternatives.
+
+\item Remind the last elections of president of Czech Republic. Do you think that first or second
+or both rounds work as a dictatorship?
+
+\item Is there any relation between Vickrey's Second Price Auction and Vickrey-Clarke-Grove mechanism
+with a Clarke pivot rule?
+
+\item There is one more exercise but that we tell you in a lecture.
+
+\end{enumerate}
+
+\section{Graphical Games}
+For simplicity, each player $i$ has only two pure strategies $\{0, 1\}$.
+A mixed strategy is given by a probability $m_i \in [0, 1]$ that the player will play 0.
+We denote a vector of mixed strategies of all players by $\vec{m}$.
+
+For an undirected graph $G$ on vertices $[n] := \{1, \dots n\}$ let $N(i)$ denote the
+set of neighbors of $i$ and $i$ itself.
+
+\begin{definition} A \textit{graphical game} is a pair $(G, \calM)$ where $G$ is an undirected graph on
+vertices $[n]$ and $\calM$ is a set of $n$ \textit{local game matrices}.
+For any vector of strategies $s$ the matrix $M_i \in \calM$ specifies the payoff $M_i(s)$
+for the player $i$ which depends only on the actions taken by the players in $N(i)$.
+\end{definition}
+
+\subsection{Computing Nash Equilibria in Tree Graphical Games}
+\begin{definition}[An approximation of Nash equilibrium] An \textit{$\varepsilon$-Nash equilibrium} ($\varepsilon$-NE) is a mixed
+strategy $m$ such that for any player $i$ and each alternate mixed strategy $m'_i$
+we have that $u_i(m_i,m_{-i}) + \varepsilon\ge u_i(m'_i,m_{-i})$ where $u_i(m_i,m_{-i})$ is
+the expected payoff under the distribution $m$.
+\end{definition}
+
+\begin{theorem}
+Let $(G, \calM)$ be a graphical game in which $G$ is a (rooted) tree with $n$ vertices
+and let $d$ be the maximal number of children of a vertex. For any $\varepsilon > 0$
+let $\tau = \calO(\varepsilon/d)$. Then there exists an algorithms which computes
+an $\varepsilon$-Nash equilibrium for $(G, \calM)$ in a time polynomial
+in $1/\varepsilon$, $n$ and $2^d$, while the representation of $(G, \calM)$ takes
+$\calO(n2^d)$.
+\end{theorem}
+
+\subsection{Correlated Equilibria}
+
+\begin{definition}
+Two distributions $p$ and $q$ over vectors of strategies are \textit{expected payoff equivalent},
+denoted $p \equiv_{\mathrm{EP}} q$, if $p$ and $q$ yield the same expected payoff vector, i.e.,
+for each $i$ we have $\E_{s \sim p} u_i(s) = \E_{s \sim q} u_i(s)$ where $s \sim p$ means that $s$ is chosen
+according to the distribution $p$.
+\end{definition}
+
+\begin{definition}
+For any graph $G$, two distributions $p$ and $q$ over vectors of strategies are
+\textit{local neighborhood equivalent} with respect to $G$, denoted $p \equiv_{\mathrm{LN}} q$,
+if for all players $i$ and for all settings $s_{N(i)}$ of strategies of players in $N(i)$
+we have $p(s_{N(i)}) = q(s_{N(i)})$.
+\end{definition}
+
+\begin{definition}
+A local Markov network is a pair $M = (G, \Psi)$ where $G$ is an undirected graph on vertices $[n]$
+and $\Psi$ is a set of \textit{potential functions}, one for each local neighborhood $N(i)$.
+Each $\psi_i \in \Psi$ maps binary assignment of values of $N(i)$ to the range $[0,\infty)$,
+i.e., $\Psi = \{ \psi_i: i \in [n]; \psi_i: \{ s_{N(i)} \} \rightarrow [0, \infty )\}$
+where $s_{N(i)}$ is a set of $2^{|N(i)|}$ possible settings in $N(i)$.
+
+A local Markow network $M$ defines a probability distribution $p_M$ as follows.
+For any binary assignment $s$ to the vertices we define
+$$p_M(s) := \frac{1}{Z}\left( \prod_{i=1}^n \psi_i (s_{N(i)}) \right)$$
+where $Z = \sum_s \prod_{i=1}^n \psi_i (s_{N(i)}) > 0$ is a normalization factor.
+\end{definition}
+
+\begin{theorem}
+For all graphical games $(G, \calM)$ and for any correlated equilibrium $p$
+there exists a distribution $q$ such that
+\begin{enumerate}
+\item $q$ is also a correlated equilibrium for $(G, \calM)$,
+\item $q$ gives all players the same expected payoff as $p$, i.e., $q \equiv_{\mathrm{EP}} p$,
+\item $q$ can be represented as a local Markov network with the graph $G$.
+\end{enumerate}
+
+%Moreover, we can compute a correlated equilibrium of a tree graphical game with a linear program in a time
+%polynomial $n$ and $2^d$.
+
+\end{theorem}
+
+\end{document}
